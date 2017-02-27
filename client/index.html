@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en" ng-app>
+  <head>
+    <title>Stock Market Chart</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap-responsive.min.css">
+    <style>
+      body {
+        padding-top: 60px;
+      }
+    </style>
+    <script>
+      function ChatController($scope) {
+        var socket = io.connect();
+
+        $scope.stocks = [];
+        $scope.stock = '';
+
+        socket.on('connect', function () {
+          $scope.setStock();
+        });
+
+        socket.on('stock', function () {
+          $scope.stocks.push();
+          $scope.$apply();
+        });
+
+        $scope.send = function send() {
+          console.log('Sending stock:', $scope.stock);
+          socket.emit('stock', $scope.stock);
+          $scope.stock = '';
+        };
+
+        $scope.setStock = function setStock() {
+          socket.emit('identify', $scope.stock);
+        };
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container" ng-controller="ChatController">
+      <div class="page-header">
+        <h1>Stock Market</h1>
+      </div>
+      <div id="container" style="height: 400px; min-width: 310px"></div>
+      <div class="row">
+        <div class="span9">
+          <table class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th class="span2">Stock</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="stock in stocks">
+                <td class="span2" ng-bind="stock.stock"></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="row controls">
+            <form ng-submit="send()">
+              <div class="span8">
+                <input type="text" class="input-block-level" ng-model="stock" ng-change="setStock()" placeholder="Stock code">
+                <input type="submit" class="span1 btn btn-primary" value="Send" >
+              </div>
+              <!--<div class="input-append span7">-->
+              <!--  <input type="text" class="span6" ng-model="text" placeholder="stock">-->
+              <!--  <input type="submit" class="span1 btn btn-primary" value="Send" ng-disabled="!text">-->
+              <!--</div>-->
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/angular.min.js"></script>
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="/js/script.js"></script>
+  </body>
+</html>
