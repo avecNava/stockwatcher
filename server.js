@@ -45,7 +45,7 @@ io.on('connection', function (socket) {
         return;
 
       socket.get('stock', function (err, stock) {
-        console.log("socket.get stock")
+        console.log("socket.get stock!!!!!!" + stock)
         var data = {
           stock: stock,
         };
@@ -53,10 +53,6 @@ io.on('connection', function (socket) {
         broadcast('stock', data);
         stocks.push(data);
       });
-    });
-
-    socket.on('identify', function (stock) {
-      console.log("socket.on identify")
     });
   });
 

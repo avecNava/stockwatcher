@@ -18,11 +18,10 @@
         $scope.stock = '';
 
         socket.on('connect', function () {
-          $scope.setStock();
         });
 
-        socket.on('stock', function () {
-          $scope.stocks.push();
+        socket.on('stock', function (stock) {
+          $scope.stocks.push(stock);
           $scope.$apply();
         });
 
@@ -30,10 +29,6 @@
           console.log('Sending stock:', $scope.stock);
           socket.emit('stock', $scope.stock);
           $scope.stock = '';
-        };
-
-        $scope.setStock = function setStock() {
-          socket.emit('identify', $scope.stock);
         };
       }
     </script>
@@ -61,7 +56,7 @@
           <div class="row controls">
             <form ng-submit="send()">
               <div class="span8">
-                <input type="text" class="input-block-level" ng-model="stock" ng-change="setStock()" placeholder="Stock code">
+                <input type="text" class="input-block-level" ng-model="stock" placeholder="Stock code">
                 <input type="submit" class="span1 btn btn-primary" value="Send" >
               </div>
               <!--<div class="input-append span7">-->
