@@ -10,28 +10,7 @@
         padding-top: 60px;
       }
     </style>
-    <script>
-      function ChatController($scope) {
-        var socket = io.connect();
 
-        $scope.stocks = [];
-        $scope.stock = '';
-
-        socket.on('connect', function () {
-        });
-
-        socket.on('stock', function (stock) {
-          $scope.stocks.push(stock);
-          $scope.$apply();
-        });
-
-        $scope.send = function send() {
-          console.log('Sending stock:', $scope.stock);
-          socket.emit('stock', $scope.stock);
-          $scope.stock = '';
-        };
-      }
-    </script>
   </head>
   <body>
     <div class="container" ng-controller="ChatController">
@@ -49,7 +28,7 @@
             </thead>
             <tbody>
               <tr ng-repeat="stock in stocks">
-                <td class="span2" ng-bind="stock.stock"></td>
+                <td class="span2" ng-bind="stock"></td>
               </tr>
             </tbody>
           </table>
@@ -68,11 +47,13 @@
         </div>
       </div>
     </div>
+    <script type="text/javascript" src="https://www.highcharts.com/samples/data/three-series-1000-points.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/angular.min.js"></script>
     <script src="https://code.highcharts.com/stock/highstock.js"></script>
     <script src="/js/script.js"></script>
+    
   </body>
 </html>

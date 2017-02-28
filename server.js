@@ -37,22 +37,9 @@ io.on('connection', function (socket) {
       sockets.splice(sockets.indexOf(socket), 1);
     });
 
-    socket.on('stock', function (msg) {
-      console.log("socket.on stock")
-      var stock = String(msg || '');
-
-      if (!stock)
-        return;
-
-      socket.get('stock', function (err, stock) {
-        console.log("socket.get stock!!!!!!" + stock)
-        var data = {
-          stock: stock,
-        };
-
-        broadcast('stock', data);
-        stocks.push(data);
-      });
+    socket.on('stock', function (data) {
+      broadcast('stock', data);
+      stocks.push(data);
     });
   });
 
