@@ -21,7 +21,7 @@ var server = http.createServer(router);
 var io = socketio.listen(server);
 
 router.use(express.static(path.resolve(__dirname, 'client')));
-var stocks = [];
+var stocks = ['MSFT', 'AAPL'];
 var sockets = [];
 
 io.on('connection', function (socket) {
@@ -41,6 +41,15 @@ io.on('connection', function (socket) {
       broadcast('stock', data);
       stocks.push(data);
     });
+    
+    socket.on('deleteStock', function (data) {
+      broadcast('deleteStock', data);
+        var index = stocks.indexOf(data);
+        if (index > -1) {
+            stocks.splice(index, 1);
+        }
+    });
+    
   });
 
 

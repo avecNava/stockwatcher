@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/bootstrap-responsive.min.css">
+    <link rel="stylesheet" href="/css/style.css">
     <style>
       body {
         padding-top: 60px;
@@ -20,18 +21,15 @@
       <div id="container" style="height: 400px; min-width: 310px"></div>
       <div class="row">
         <div class="span9">
-          <table class="table table-striped table-bordered">
-            <thead>
-              <tr>
-                <th class="span2">Stock</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr ng-repeat="stock in stocks">
-                <td class="span2" ng-bind="stock"></td>
-              </tr>
-            </tbody>
-          </table>
+              <div ng-repeat="stock in stocks">
+                <div class="card">
+                  <div class="card-container">
+                    <h4 ng-bind="stock"></h4> 
+                    <p>Interior Designer <button ng-attr-id="stock" ng-click="sendDelete(stock)">Delete</button></p> 
+                  </div>
+                </div>
+              </div>
+
           <div class="row controls">
             <form ng-submit="send()">
               <div class="span8">
