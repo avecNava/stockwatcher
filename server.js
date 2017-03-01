@@ -21,7 +21,7 @@ var server = http.createServer(router);
 var io = socketio.listen(server);
 
 router.use(express.static(path.resolve(__dirname, 'client')));
-var stocks = ['MSFT', 'AAPL'];
+var stocks = [{name: 'Microsoft Corporation', code: 'MSFT'}, {name: 'Apple Inc', code: 'AAPL'}];
 var sockets = [];
 
 io.on('connection', function (socket) {
@@ -44,9 +44,11 @@ io.on('connection', function (socket) {
     
     socket.on('deleteStock', function (data) {
       broadcast('deleteStock', data);
-        var index = stocks.indexOf(data);
-        if (index > -1) {
-            stocks.splice(index, 1);
+        for(var i = 0; i < stocks.length; i++) {
+            if(stocks[i].code == data) {
+                stocks.splice(i, 1);
+                break;
+            }
         }
     });
     

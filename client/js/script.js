@@ -31,9 +31,26 @@ function ChatController($scope) {
     });
     
     $scope.send = function send() {
-      console.log('Sending stock:', $scope.stock);
-      socket.emit('stock', $scope.stock.toUpperCase());
-      $scope.stock = '';
+        if ($scope.stocks.filter(function(e) { return e.code == $scope.stock.toUpperCase(); }).length == 0) {
+            const stockName = $scope.stock.toUpperCase();
+            console.log('Sending stock:', stockName);
+            const site = 'https://www.quandl.com/api/v3/datasets/WIKI/'+$scope.stock+'/metadata.json?api_key=A-MudQvM2MVxvp7Tsm7M';
+            $.getJSON(site, function (data) {
+                var stockData = {
+                  name: data.dataset.name.substr(0, data.dataset.name.indexOf('(')).trim(),
+                  code: stockName
+                };
+                socket.emit('stock', stockData);
+                $( ".errors" ).text("");
+            }).fail(function() {
+                $( ".errors" ).text("Uh oh! That stock code is invalid.");
+            });
+    
+            $scope.stock = '';
+            
+        } else {
+            $( ".errors" ).text("Whoops! That stock code is already on the graph!");
+        };
 
     };
     
@@ -46,9 +63,9 @@ function ChatController($scope) {
     function addStock(stock) {
         $scope.stocks.push(stock);
         $scope.$apply();
-        console.log('adding stock to graph: ' + stock)
+        console.log('adding stock to graph: ' + stock.code)
         const yearAgo = new Date(new Date().setFullYear(new Date().getFullYear() - 1)).toISOString().slice(0,10);
-        const site = 'https://www.quandl.com/api/v3/datasets/WIKI/' + stock.toUpperCase() + '/data.json?start_date=' + yearAgo + '&column_index=4&order=asc&api_key=A-MudQvM2MVxvp7Tsm7M'
+        const site = 'https://www.quandl.com/api/v3/datasets/WIKI/' + stock.code + '/data.json?start_date=' + yearAgo + '&column_index=4&order=asc&api_key=A-MudQvM2MVxvp7Tsm7M'
         console.log(site);
         $.getJSON(site, function (data) {
             if (data.hasOwnProperty('dataset_data')) {
@@ -61,8 +78,8 @@ function ChatController($scope) {
                 });
                 console.log(stockData)
                 chart.addSeries({
-                    id: stock,
-                    name: stock,
+                    id: stock.code,
+                    name: stock.code,
                     data: stockData
                 });     
             }
@@ -72,11 +89,10 @@ function ChatController($scope) {
     
     function deleteStock(stock) {
         chart.get(stock).remove();	
-        var index = $scope.stocks.indexOf(stock);
-        if (index > -1) {
-            $scope.stocks.splice(index, 1);
-            $scope.$apply();
-        }
+        $scope.stocks = $.grep($scope.stocks, function(e){ 
+             return e.code != stock; 
+        });
+        $scope.$apply();
     }
     
 
